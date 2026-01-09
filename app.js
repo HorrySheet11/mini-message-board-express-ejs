@@ -28,19 +28,24 @@ app.get("/new", (req, res) => {
 	res.render("form");
 });
 
+app.get("/details", (req, res) => {
+  res.render("inspectMessage", {
+    message: messages[req.query.id],
+  });
+})
+
 app.use(express.urlencoded({ extended: true }));
 
 app.post("/new", (req, res) => {
-	const message = {
+	messages.push({
 		text: req.body.message,
 		user: req.body.name,
 		added: new Date(),
-	};
-	messages.push(message);
+	});
 	res.redirect("/");
 });
 
-// const assetsPath = path.join(__dirname, "public");
-// app.use(express.static(assetsPath));
+const assetsPath = path.join(__dirname, "public");
+app.use(express.static(assetsPath));
 
 app.listen(3000);

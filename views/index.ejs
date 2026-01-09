@@ -1,5 +1,8 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Homepage</title>
     <link rel="stylesheet" href="/styles.css">
   </head>
@@ -8,12 +11,14 @@
 
     <h2><%= title %></h2>
     <ul>
-      <% messages.forEach((user) => { %>
-        <li><%- user.text %>
+      <% messages.forEach((user,index) => { %>
+        <li><h2><%- user.text %></h2>
           <p>From: <%- user.user %></p>
-          <p>Added: <%- user.added %></p></li>
+          <p>Added: <%- user.added %></p>
+          <button><a href="/details?id=<%= index %>">Details</a></button></li>
       <% }); %>
     </ul>
     <button><a href="/new">Send a message</a></button>
   </body>
 </html>
+
