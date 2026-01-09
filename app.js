@@ -25,7 +25,19 @@ app.get("/", (req, res) => {
 });
 
 app.get("/new", (req, res) => {
-	res.render("new");
+	res.render("form");
+});
+
+app.use(express.urlencoded({ extended: true }));
+
+app.post("/new", (req, res) => {
+	const message = {
+		text: req.body.message,
+		user: req.body.name,
+		added: new Date(),
+	};
+	messages.push(message);
+	res.redirect("/");
 });
 
 // const assetsPath = path.join(__dirname, "public");
