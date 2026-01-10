@@ -1,6 +1,17 @@
-<form method="POST" action="/new">
-  <legend>Send a message</legend>
-  <label>Sender: <input type="text" name="name" placeholder="Enter Name"></label>
-  <label>Message: <textarea name="message" id="message" placeholder="Enter message here" cols="30" rows="10"></textarea></label>
-  <button type="submit">Send</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create a message</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <form method="POST" action="/new">
+    <h2>Send a message</h2>
+    <label>Sender: <input type="text" name="name" placeholder="Enter Name"></label>
+    <label>Message: <textarea name="message" id="message" placeholder="Enter message" cols="30" rows="10"></textarea></label>
+    <button type="submit">Send</button>
+  </form>
+</body>
+</html>
