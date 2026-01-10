@@ -47,4 +47,8 @@ app.post("/new", (req, res) => {
 const assetsPath = path.join(__dirname, "public");
 app.use(express.static(assetsPath));
 
-app.listen(3000);
+const port = process.env.PORT || 4000; 
+
+app.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
+});
