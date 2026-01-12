@@ -8,17 +8,17 @@
   </head>
   <body>
     <h1>Homepage</h1>
-
+    
     <h2><%= title %></h2>
+    <button><a href="/new">Send a message</a></button>
     <ul>
-      <% messages.forEach((user,index) => { %>
-        <li><h2><%- user.text %></h2>
-          <p>From: <%- user.user %></p>
-          <p>Added: <%- user.added %></p>
-          <button><a href="/details?id=<%= index %>">Details</a></button></li>
+      <% messages.forEach((user) => { %>
+        <li><h2><%- user.message %></h2>
+          <p>From: <%- user.sender %></p>
+          <p>Added: <%- user.dateAdded %></p>
+          <button><a href="/details?id=<%- user.id %>">Details</a></button></li>
       <% }); %>
     </ul>
-    <button><a href="/new">Send a message</a></button>
   </body>
 </html>
 

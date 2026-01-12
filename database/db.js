@@ -1,5 +1,5 @@
-import mysql from 'mysql2';
-import dotenv from 'dotenv';
+const dotenv = require('dotenv');
+const mysql = require('mysql2');
 dotenv.config();
 
 const pool = mysql.createPool({
@@ -12,23 +12,25 @@ const pool = mysql.createPool({
   queueLimit: 0
 }).promise();
 
-export async function getMessages(){
+async function getMessages(){
   const [result] = await pool.query('Select * from messages');
   return result;
 }
 
-export async function getMessage(id){
+async function getMessage(id){
   const [result] = await pool.query(`Select * from messages where id = ?`, [id]);
   return result[0];
 }
 
-export async function createMessage(user, text){
+async function createMessage(user, text){
   const [result] = await pool.query(`Insert into messages (sender, message) values (?, ?)`, [user, text]);
   const id = result.insertId;
   return getMessage(id);
 }
 
-const messages = await getMessages();
-const message = await getMessage(2);
-const newMessage = await createMessage('Maya', 'Eeuuuuughexport ');
-console.log(newMessage);
+// const messages = await getMessages();
+// const message = await getMessage(2);
+// const newMessage = await createMessage('Maya', 'Eeuuuuughexport ');
+// console.log(messages);
+
+module.exports = { getMessages, getMessage, createMessage };
