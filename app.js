@@ -38,6 +38,11 @@ app.use(express.static(assetsPath));
 
 const port = process.env.PORT || 4000;
 
+app.use((err, req, res, next) => {
+  console.error(err.stack); // Log the error stack for debugging
+  res.status(err.status || 500).render("error"); // Send a generic response
+});
+
 app.listen(port, () => {
 	console.log(`Server is listening on port ${port}`);
 });
