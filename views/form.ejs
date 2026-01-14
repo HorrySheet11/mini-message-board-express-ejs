@@ -16,7 +16,33 @@
     <h2>Send a message</h2>
     <label>Sender: <input type="text" name="name" placeholder="Enter Name"></label>
     <label>Message: <textarea name="message" id="message" placeholder="Enter message" cols="30" rows="10"></textarea></label>
-    <button type="submit">Send</button><button><a href="/">Back</a></button>
+    <button type="submit" onclick="sendMessage()">Send</button><button><a href="/">Back</a></button>
   </form>
 </body>
+  <script>
+    const socket = new WebSocket('ws://localhost:4000');
+
+    socket.addEventListener('open', (event) => {
+        console.log('Message from server: Connection established!');
+    });
+
+    socket.addEventListener('message', (event) => {
+      console.log(`Message from server: ${event.data}`);
+      
+    });
+
+    socket.addEventListener('error', (event) => {
+        console.error('Message from server: Connection error!');
+    });
+
+    socket.addEventListener('close', (event) => {
+        console.log('Message from server: Connection closed.');
+    });
+
+    function sendMessage() {
+      const message = document.getElementById('message').value;
+      socket.send(message);
+    }
+
+  </script>
 </html>

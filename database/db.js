@@ -28,9 +28,5 @@ async function createMessage(user, text){
   return getMessage(id);
 }
 
-// const messages = await getMessages();
-// const message = await getMessage(2);
-// const newMessage = await createMessage('Maya', 'Eeuuuuughexport ');
-// console.log(messages);
 
 module.exports = { getMessages, getMessage, createMessage };
