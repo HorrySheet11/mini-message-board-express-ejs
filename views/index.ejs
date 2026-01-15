@@ -25,6 +25,25 @@
       <% }); %>
     </ul>
   </body>
- 
+  <script>
+    const socket = new WebSocket('ws://localhost:4000');
+
+    socket.addEventListener('open', (event) => {
+        console.log('Message from server: Connection established from index!');
+    });
+
+    socket.addEventListener('message', (event) => {
+      console.log(`Message from server: ${event.data}`);
+    });
+
+    socket.addEventListener('error', (event) => {
+        console.error('Message from server: Connection error!');
+    });
+
+    socket.addEventListener('close', (event) => {
+        console.log('Message from server: Connection closed.');
+    });
+
+  </script>
 </html>
 

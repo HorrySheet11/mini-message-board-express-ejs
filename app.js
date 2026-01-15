@@ -1,37 +1,23 @@
 const path = require("node:path");
-const WebSocket = require("ws");
+const {WebSocketServer, WebSocket} = require("ws");
 const http = require("node:http");
 const express = require("express");
+const configure = require("./routers/indexRouter");
 
 const app = express();
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
-const { createMessage, getMessage, getMessages } = require("./database/db.js");
-let message = [];
+configure(app);
 
-app.get("/", async (req, res) => {
-	message = await getMessages();
-	res.render("index", { title: "Mini Messageboard", messages: message });
-});
+function onSocketPreError(e) {
+    console.log(e);
+}
 
-app.get("/new", (req, res) => {
-	res.render("form");
-});
-
-app.get("/details", async (req, res) => {
-	res.render("inspectMessage", {
-		message: await getMessage(req.query.id),
-	});
-});
-
+function onSocketPostError(e) {
+    console.log(e);
+}
 app.use(express.urlencoded({ extended: true }));
-
-app.post("/new", async (req, res) => {
-	const { name, message } = req.body;
-	await createMessage(name, message);
-	res.status(201).redirect("/");
-});
 
 const assetsPath = path.join(__dirname, "public");
 app.use(express.static(assetsPath));
@@ -43,23 +29,39 @@ app.use((err, req, res, next) => {
 	res.status(err.status || 500).render("error"); // Send a generic response
 });
 
-const serve = app.listen(port, () => {
+const server = app.listen(port, () => {
 	console.log(`Server is listening on port ${port}`);
 });
 
-const wss = new WebSocket.Server({ server : serve });
+const wss = new WebSocketServer({ noServer: true });
 
-wss.on("connection", (ws) => {
-	console.log("Client connected");
+server.on('upgrade', (req, socket, head) => {
+    socket.on('error', onSocketPreError);
 
-	ws.on("message", (message,res) => {
-		console.log(`Received: ${message}`);
-		res.render("/");
-		ws.send(`Server received: ${message}`);
-	});
+    // perform auth
+    if (!req.headers.BadAuth) {
+        socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+        socket.destroy();
+        return;
+    }
 
-	ws.on("close", () => {
-		console.log("Client disconnected");
-	});
+    wss.handleUpgrade(req, socket, head, (ws) => {
+        socket.removeListener('error', onSocketPreError);
+        wss.emit('connection', ws, req);
+    });
 });
 
+wss.on('connection', (ws, req) => {
+    ws.on('error', onSocketPostError);
+    ws.on('message', (msg, isBinary) => {
+        wss.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(msg, { binary: isBinary });
+            }
+        });
+    });
+
+    ws.on('close', () => {
+        console.log('Connection closed');
+    });
+});
