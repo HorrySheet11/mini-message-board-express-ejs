@@ -1,3 +1,4 @@
+
 let ws = null;
 
 function closeConnection() {

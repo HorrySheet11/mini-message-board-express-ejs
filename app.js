@@ -1,6 +1,5 @@
 const path = require("node:path");
 const express = require("express");
-const {createServer} = require("node:http");
 const {WebSocketServer, WebSocket} = require("ws");
 const configure = require("./routers/indexRouter");
 const { getMessages } = require("./database/db.js");
@@ -24,7 +23,7 @@ function onSocketPostError(e) {
 }
 
 const port = process.env.PORT || 4000;
-
+module.exports = port;
 const server = app.listen(port, () => {
 	console.log(`Server is listening on port ${port}`);
 });

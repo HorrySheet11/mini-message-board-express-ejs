@@ -6,6 +6,9 @@
 	box-sizing: border-box;
 }
 
+html{
+	overflow: auto;
+}
 
 body {
 	background-color: lightblue;
