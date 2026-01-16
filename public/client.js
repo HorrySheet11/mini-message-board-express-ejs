@@ -20,7 +20,7 @@ function sendMessage() {
 
 closeConnection();
 
-const isLocalhost = window.location.hostname === "localhost" ? "ws://localhost:3000" : 'wss://mini-message-board-express-ejs.onrender.com';
+const isLocalhost = window.location.hostname === "localhost" ? "ws://localhost:3000" : 'wss://mini-message-board-express-ejs.onrender.com:10000';
 
 const socket = new WebSocket(`${isLocalhost}`);
 
