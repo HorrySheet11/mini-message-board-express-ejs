@@ -24,14 +24,10 @@ function onSocketPostError(e) {
 }
 
 const port = process.env.PORT || 4000;
-module.exports = port;
-const s = app.listen(port, () => {
-	console.log(`Server is listening on port ${port}`);
-});
 const server = createServer(app)
-const wss = new WebSocketServer({ server, path: '/ws'  });
+const wss = new WebSocketServer({ server, path: '/ws' });
 
-s.on('upgrade', (req, socket, head) => {
+server.on('upgrade', (req, socket, head) => {
     socket.on('error', onSocketPreError);
 
     // perform auth
@@ -62,3 +58,8 @@ wss.on('connection', (ws, req) => {
         console.log('Connection closed');
     });
 });
+
+server.listen(port, () => {
+	console.log(`Server is listening on port ${port}`);
+});
+
