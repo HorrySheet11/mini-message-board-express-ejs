@@ -1,4 +1,3 @@
-const WebSocket = require('ws')
 let ws = null;
 
 function closeConnection() {
