@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Create a message</title>
-  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="shortcut icon" href="/favicon.ico" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+  <link rel="manifest" href="/favicon/site.webmanifest" />
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -19,29 +19,5 @@
     <button type="submit" onclick="sendMessage()">Send</button><button><a href="/">Back</a></button>
   </form>
 </body>
-  <script>
-    const socket = new WebSocket('ws://localhost:4000');
-
-    socket.addEventListener('open', (event) => {
-        console.log('Message from server: Connection established from form!');
-    });
-
-    socket.addEventListener('message', (event) => {
-      console.log(`Message from server: ${event.data}`);
-    });
-
-    socket.addEventListener('error', (event) => {
-        console.error('Message from server: Connection error!');
-    });
-
-    socket.addEventListener('close', (event) => {
-        console.log('Message from server: Connection closed.');
-    });
-
-    function sendMessage() {
-      const message = document.getElementById('message').value;
-      socket.send(message);
-    }
-
-  </script>
+  <script src="/client.js"></script>
 </html>

@@ -1,11 +1,21 @@
 const { getMessages } = require("../database/db.js");
-let message = [];
+
+
 module.exports = function configure(app) {
 	app
 		.get("/", async (req, res) => {
-			message = await getMessages();
-			res.render("index", { title: "Mini Messageboard", messages: message });
+			const message = await getMessages();
+			res.render("index", {messages: message });
 		})
 		.use("/details", require("./inspectRouter.js"))
-		.use("/form", require("./formRouter.js"));
+		.use("/new", require("./formRouter.js"))
+		.use((error, req, res, next) => {
+			console.error(error.stack);
+			switch (error.message) {
+				case "Not Found":
+					res.render("notFound");
+					return;
+			}
+			res.render("error");
+		});
 };

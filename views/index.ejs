@@ -4,19 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Homepage</title>
-  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="shortcut icon" href="/favicon.ico" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+  <link rel="manifest" href="/favicon/site.webmanifest" />
   <link rel="stylesheet" href="/styles.css">
   </head>
   <body>
     <h1>Horry Message Board</h1>
     
-    <h2><%= title %></h2>
     <button><a href="/new">Send a message</a></button>
-    <ul>
+    <ul id="messages">
       <% messages.forEach((user) => { %>
         <li><h2><%- user.message %></h2>
           <p>From: <%- user.sender %></p>
@@ -25,25 +24,6 @@
       <% }); %>
     </ul>
   </body>
-  <script>
-    const socket = new WebSocket('ws://localhost:4000');
-
-    socket.addEventListener('open', (event) => {
-        console.log('Message from server: Connection established from index!');
-    });
-
-    socket.addEventListener('message', (event) => {
-      console.log(`Message from server: ${event.data}`);
-    });
-
-    socket.addEventListener('error', (event) => {
-        console.error('Message from server: Connection error!');
-    });
-
-    socket.addEventListener('close', (event) => {
-        console.log('Message from server: Connection closed.');
-    });
-
-  </script>
+  <script src="/client.js"></script>
 </html>
 
