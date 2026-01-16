@@ -29,8 +29,7 @@ const server = app.listen(port, () => {
 	console.log(`Server is listening on port ${port}`);
 });
 
-const webSServer = createServer(app)
-const wss = new WebSocketServer({ server : webSServer, path: '/ws'  });
+const wss = new WebSocketServer({ path: '/ws'  });
 
 server.on('upgrade', (req, socket, head) => {
     socket.on('error', onSocketPreError);
