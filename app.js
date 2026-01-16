@@ -25,13 +25,13 @@ function onSocketPostError(e) {
 
 const port = process.env.PORT || 4000;
 module.exports = port;
-const server = app.listen(port, () => {
+const s = app.listen(port, () => {
 	console.log(`Server is listening on port ${port}`);
 });
+const server = createServer(app)
+const wss = new WebSocketServer({ server, path: '/ws'  });
 
-const wss = new WebSocketServer({ noServer: true, path: '/ws'  });
-
-server.on('upgrade', (req, socket, head) => {
+s.on('upgrade', (req, socket, head) => {
     socket.on('error', onSocketPreError);
 
     // perform auth
