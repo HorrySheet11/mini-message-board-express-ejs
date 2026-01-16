@@ -20,9 +20,9 @@ function sendMessage() {
 
 closeConnection();
 
-const isLocalhost = window.location.hostname === "localhost" ? "localhost:3000" : 'mini-message-board-express-ejs.onrender.com';
+const isLocalhost = window.location.hostname === "localhost" ? "ws://localhost:3000" : 'wss://mini-message-board-express-ejs.onrender.com';
 
-const socket = new WebSocket(`ws://${isLocalhost}`);
+const socket = new WebSocket(`${isLocalhost}`);
 
 socket.addEventListener("open", (event) => {
 	console.log("Client: Connection established!");
