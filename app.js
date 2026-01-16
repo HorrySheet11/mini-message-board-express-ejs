@@ -1,5 +1,6 @@
 const path = require("node:path");
 const express = require("express");
+const { createServer } = require('http')
 const {WebSocketServer, WebSocket} = require("ws");
 const configure = require("./routers/indexRouter");
 const { getMessages } = require("./database/db.js");
@@ -28,8 +29,8 @@ const server = app.listen(port, () => {
 	console.log(`Server is listening on port ${port}`);
 });
 
-
-const wss = new WebSocketServer({ port : 3000, host: 'localhost' });
+const webSServer = createServer(app)
+const wss = new WebSocketServer({ server : webSServer, path: '/ws'  });
 
 server.on('upgrade', (req, socket, head) => {
     socket.on('error', onSocketPreError);
