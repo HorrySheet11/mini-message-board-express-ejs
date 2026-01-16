@@ -1,8 +1,10 @@
 const path = require("node:path");
 const express = require("express");
-const http = require("node:http");
+const {createServer} = require("node:http");
 const {WebSocketServer, WebSocket} = require("ws");
 const configure = require("./routers/indexRouter");
+const { getMessages } = require("./database/db.js");
+
 
 const app = express();
 app.set("views", path.join(__dirname, "views"))
@@ -27,9 +29,8 @@ const server = app.listen(port, () => {
 	console.log(`Server is listening on port ${port}`);
 });
 
-const webSServer = http.createServer(app);
 
-const wss = new WebSocketServer({ noServer : true });
+const wss = new WebSocketServer({ port : 3000, host: 'localhost' });
 
 server.on('upgrade', (req, socket, head) => {
     socket.on('error', onSocketPreError);
@@ -48,24 +49,15 @@ server.on('upgrade', (req, socket, head) => {
 });
 
 wss.on('connection', (ws, req) => {
+	console.log('Client connected');
   ws.on('error', onSocketPostError);
   ws.on('message', async (msg, isBinary) => {
-    // Instead of sending the message to all clients, refresh the index by calling '/' for each client
-    // if (msg === '/') {
-      // Call the '/' route to refresh the index for the current client
-      // app.get('/', async (req, res) => {
-        const message = await getMessages();
-        ws.send(message);
-        // res.render("index", { title: "Mini Messageboard", messages: message });
-      // })(req, res);
-    // } else {
-      // Handle other messages
-      wss.clients.forEach((client) => {
-        if (client !== ws && client.readyState === WebSocket.OPEN) {
+      wss.clients.forEach(async (client) => {
+				if (client !== ws && client.readyState === WebSocket.OPEN) {
+					const message = await getMessages();
           client.send(message);
         }
       });
-    // }
   });
     ws.on('close', () => {
         console.log('Connection closed');
