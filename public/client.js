@@ -1,10 +1,9 @@
-let ws = null;
+const hostName =
+	window.location.hostname === "localhost"
+		? "ws://localhost:4000"
+		: "wss://mini-message-board-express-ejs.onrender.com";
 
-function closeConnection() {
-	if (ws) {
-		ws.close();
-	}
-}
+const socket = io(hostName);
 
 function reloadMessage() {
 	const messages = document.getElementById("messages");
@@ -13,31 +12,31 @@ function reloadMessage() {
 	}
 }
 
-function sendMessage() {
-	socket.send(message);
+function handleErrors(err) {
+	console.log(err);
 }
 
-closeConnection();
+function sendMessage() {
+	socket.emit("message", message);
+}
 
-const hostName = window.location.hostname === "localhost" ? "ws://localhost:3000" : 'wss://mini-message-board-express-ejs.onrender.com/ws';
-
-const socket = new WebSocket(`${hostName}`);
-
-socket.addEventListener("open", (event) => {
+socket.on("connection", (socket) => {
 	console.log("Client: Connection established!");
+	socket.on("disconnect", () => {
+		console.log("user disconnected");
+	});
 });
 
-socket.addEventListener("message", (event) => {
-	console.log(`Client: ${event}`);
+socket.on("message", (msg) => {
+	console.log(`Client: ${msg}`);
 	reloadMessage();
 });
 
-socket.addEventListener("error", (event) => {
-	console.error("Client: Connection error!");
+socket.on("connect_error", (err) => {
+	console.log("connect_error");
+	handleErrors(err);
 });
-
-socket.addEventListener("close", (event) => {
-	console.log("Client: Connection closed.");
+socket.on("connect_failed", (err) => {
+	console.log("connect_failed");
+	handleErrors(err);
 });
-
-

@@ -1,7 +1,7 @@
 const path = require("node:path");
 const express = require("express");
-const { createServer } = require("http");
-const { WebSocketServer, WebSocket } = require("ws");
+const http = require("node:http");
+const { Server } = require("socket.io");
 const configure = require("./routers/indexRouter");
 const { getMessages } = require("./database/db.js");
 
@@ -10,51 +10,44 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 configure(app);
-const assetsPath = path.join(__dirname, "public");
-app.use(express.static(assetsPath));
-
-function onSocketPreError(e) {
-	console.log(e);
-}
-
-function onSocketPostError(e) {
-	console.log(e);
-}
+app.use(express.static(path.join(__dirname, "public")));
 
 const port = process.env.PORT || 4000;
-const server = app.listen(port, () => {
-	console.log(`Server is listening on port ${port}`);
-});
-const wss = new WebSocketServer({ noServer: true, path: "/ws" });
-
-server.on("upgrade", (req, socket, head) => {
-	socket.on("error", onSocketPreError);
-
-	// perform auth
-	if (!req.headers.BadAuth) {
-		socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
-		socket.destroy();
-		return;
-	}
-
-	wss.handleUpgrade(req, socket, head, (ws) => {
-		socket.removeListener("error", onSocketPreError);
-		wss.emit("connection", ws, req);
-	});
+const server = http.createServer(app);
+const io = new Server(server, {
+	// 	cors: {
+	// 		origin:
+	// 			process.env.NODE_ENV === "production"
+	// 				? false
+	// 				: ["http://localhost:5500", "http://127.0.0.1:5500"],
+	// 	},
 });
 
-wss.on("connection", (ws, req) => {
+io.on("connection", (socket) => {
 	console.log("Client connected");
-	ws.on("error", onSocketPostError);
-	ws.on("message", async (msg, isBinary) => {
-		wss.clients.forEach(async (client) => {
-			if (client !== ws && client.readyState === WebSocket.OPEN) {
-				const message = await getMessages();
-				client.send(message);
-			}
-		});
-	});
-	ws.on("close", () => {
+	socket.on("disconnect", () => {
 		console.log("Connection closed");
 	});
+	socket.on("error", (error) => {
+		console.log(error);
+	});
+	socket.on("unauthorized", (err) => {
+		console.log("There was an error with the authentication:", err.message);
+	});
+	socket.on("message", async (message) => {
+		const messages = await getMessages();
+		socket.broadcast(messages);
+	});
+});
+
+io.use((socket, next) => {
+	if (!socket.request.headers.BadAuth) {
+		next(new Error("Authentication failed"));
+		return;
+	}
+	next();
+});
+
+server.listen(port, () => {
+	console.log(`Server is listening on port ${port}`);
 });
